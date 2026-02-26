@@ -3,7 +3,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const PC_MODELS = [
-    { id: 'white_trans', name: 'NZXT Transparent', src: 'https://nzxt.com/assets/cms/34299/1615563446-h510-elite-white-black-kraken-x-system-1.png?auto=format&fit=max&h=900&w=900', label: 'NZXT White' },
+    { id: 'white_pc', name: 'Montech White', src: 'https://i.ebayimg.com/images/g/nuAAAOSw8gdkh39b/s-l400.jpg', label: 'Montech White' },
     { id: 'local_png', name: 'Local View', src: '/pc-sem-intel-i5-12400f.png', label: 'Local PNG' },
 ]
 
