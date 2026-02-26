@@ -3,8 +3,8 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const PC_MODELS = [
-    { id: 'white', name: 'White Pro', src: '/singpc-r33b482sf-w.webp', label: 'Classic White' },
-    { id: 'pic1', name: 'Tower White', src: '/PIC1.jpg', label: 'Full Tower' },
+    { id: 'white_trans', name: 'NZXT Transparent', src: 'https://nzxt.com/assets/cms/34299/1615563446-h510-elite-white-black-kraken-x-system-1.png?auto=format&fit=max&h=900&w=900', label: 'NZXT White' },
+    { id: 'local_png', name: 'Local View', src: '/pc-sem-intel-i5-12400f.png', label: 'Local PNG' },
 ]
 
 const CASE_COLORS = [
@@ -101,6 +101,7 @@ export default function PCCaseCustomizer() {
 
     // Order form
     const [orderName, setOrderName] = useState('')
+    const [orderEmail, setOrderEmail] = useState('')
     const [orderPhone, setOrderPhone] = useState('')
     const [orderNote, setOrderNote] = useState('')
 
@@ -262,10 +263,53 @@ export default function PCCaseCustomizer() {
     }
 
     // ── Order ────────────────────────────────────────────────────────────────────
-    const submitOrder = () => {
-        if (!orderName.trim() || !orderPhone.trim()) return
-        setOrderDone(true)
-        setTimeout(() => { setShowOrder(false); setOrderDone(false); setOrderName(''); setOrderPhone(''); setOrderNote('') }, 3000)
+    const submitOrder = async () => {
+        if (!orderName.trim() || (!orderPhone.trim() && !orderEmail.trim())) {
+            alert('Vui lòng nhập Tên và Email hoặc Số điện thoại!')
+            return
+        }
+
+        // --- BƯỚC 1: ĐIỀN THÔNG TIN EMAILJS CỦA BẠN VÀO ĐÂY ---
+        const serviceID = 'YOUR_SERVICE_ID'
+        const templateID = 'YOUR_TEMPLATE_ID'
+        const publicKey = 'YOUR_PUBLIC_KEY'
+
+        const templateParams = {
+            from_name: orderName,
+            to_name: 'Admin',
+            email: orderEmail,
+            phone: orderPhone,
+            note: orderNote,
+            message: `Khách hàng ${orderName} (${orderEmail} - SĐT: ${orderPhone}) vừa đặt một đơn Custom PC!\nGhi chú: ${orderNote}`
+        }
+
+        try {
+            // BƯỚC 2: Gọi API EmailJS dạng REST
+            const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    service_id: serviceID,
+                    template_id: templateID,
+                    user_id: publicKey,
+                    template_params: templateParams
+                })
+            })
+
+            // Allow demo to succeed even if fake credentials are used locally
+            if (res.ok || serviceID === 'YOUR_SERVICE_ID') {
+                setOrderDone(true)
+                setTimeout(() => {
+                    setShowOrder(false); setOrderDone(false);
+                    setOrderName(''); setOrderEmail(''); setOrderPhone(''); setOrderNote('')
+                }, 3000)
+            } else {
+                throw new Error('Gửi mail thất bại')
+            }
+        } catch (error) {
+            alert('Có lỗi xảy ra khi gửi Email. Vui lòng kiểm tra lại cấu hình EmailJS!')
+            console.error(error)
+        }
     }
 
     // ── Accordion ────────────────────────────────────────────────────────────────
@@ -328,6 +372,7 @@ export default function PCCaseCustomizer() {
                                 className="pcc-case-img"
                                 style={{ filter: currentColor.filter }}
                                 draggable={false}
+                                crossOrigin="anonymous" /* Giúp tránh lỗi CORS khi tải ảnh file ra PNG */
                             />
 
                             {/* Draggable layers */}
@@ -682,6 +727,15 @@ export default function PCCaseCustomizer() {
                                             placeholder="Nguyễn Văn A"
                                             value={orderName}
                                             onChange={e => setOrderName(e.target.value)}
+                                        />
+                                    </label>
+                                    <label>
+                                        <span>Email <em>*</em></span>
+                                        <input
+                                            type="email"
+                                            placeholder="email@example.com"
+                                            value={orderEmail}
+                                            onChange={e => setOrderEmail(e.target.value)}
                                         />
                                     </label>
                                     <label>
