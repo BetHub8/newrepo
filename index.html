@@ -1,30 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/png" href="/Logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Build & Score PC - Check PC component compatibility and build your perfect rig with smart suggestions from Semcomputer" />
-  <meta name="keywords"
-    content="PC builder, compatibility checker, build PC, Semcomputer, PC components, compatibility check" />
-  <meta property="og:title" content="Build & Score PC - Semcomputer" />
-  <meta property="og:description"
-    content="Check PC component compatibility, build your perfect PC with smart suggestions" />
+    content="Design Your Own PC Case - Tự thiết kế vỏ máy tính theo phong cách của bạn với sticker, chữ và hình ảnh tùy chỉnh." />
+  <meta name="keywords" content="custom PC case, thiết kế vỏ PC, PC customizer, semcomputer, gaming PC" />
+  <meta property="og:title" content="PC Case Customizer - Semcomputer" />
+  <meta property="og:description" content="Tự thiết kế vỏ máy tính theo phong cách riêng của bạn!" />
   <meta property="og:type" content="website" />
-  <title>Build & Score PC - Semcomputer</title>
+  <title>PC Case Customizer - Semcomputer</title>
+  <!-- html2canvas for PNG export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
-  <!-- Hidden form for Netlify to detect -->
+  <!-- Hidden form for Netlify -->
   <form name="order-form" data-netlify="true" netlify-honeypot="bot-field" hidden>
     <input type="text" name="name" />
     <input type="tel" name="phone" />
-    <textarea name="address"></textarea>
-    <textarea name="note"></textarea>
-    <textarea name="build_details"></textarea>
-    <input type="text" name="total_price" />
+    <input type="text" name="case_color" />
+    <textarea name="design_notes"></textarea>
   </form>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
