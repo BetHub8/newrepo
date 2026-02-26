@@ -229,7 +229,11 @@ export default function PCCaseCustomizer() {
     // ── Zoom ────────────────────────────────────────────────────────────────────
     const zoomIn = () => setZoom(z => Math.min(2.5, parseFloat((z + 0.15).toFixed(2))))
     const zoomOut = () => setZoom(z => Math.max(0.4, parseFloat((z - 0.15).toFixed(2))))
-    const zoomReset = () => setZoom(1)
+    const zoomReset = () => {
+        setZoom(1)
+        setLayers([])
+        setActiveId(null)
+    }
 
     // ── Download PNG ─────────────────────────────────────────────────────────────
     const downloadPNG = async () => {
@@ -270,21 +274,40 @@ export default function PCCaseCustomizer() {
         }
 
         // --- BƯỚC 1: ĐIỀN THÔNG TIN EMAILJS CỦA BẠN VÀO ĐÂY ---
-        const serviceID = 'YOUR_SERVICE_ID'
-        const templateID = 'YOUR_TEMPLATE_ID'
-        const publicKey = 'YOUR_PUBLIC_KEY'
+        const serviceID = 'service_f3od69s'
+        const templateID = 'template_kgruz5j'
+        const publicKey = 'llxnrtunhRoHMw6Gd'
 
+        // BƯỚC 1.5: Render ảnh PNG hiện tại bằng thẻ Preview trước
+        let base64Image = ''
+        if (previewRef.current && window.html2canvas) {
+            // Tắt trạng thái active để chụp ảnh mượt mà
+            setActiveId(null)
+            await new Promise(r => setTimeout(r, 100))
+            const canvas = await window.html2canvas(previewRef.current, {
+                backgroundColor: null,
+                scale: 1, // Kích thước nhẹ để gửi mail
+                useCORS: true,
+                allowTaint: true,
+                logging: false,
+            })
+            base64Image = canvas.toDataURL('image/png')
+        }
+
+        // --- BƯỚC 2: Gọi API EmailJS dạng REST
         const templateParams = {
             from_name: orderName,
             to_name: 'Admin',
             email: orderEmail,
             phone: orderPhone,
             note: orderNote,
-            message: `Khách hàng ${orderName} (${orderEmail} - SĐT: ${orderPhone}) vừa đặt một đơn Custom PC!\nGhi chú: ${orderNote}`
+            message: `Khách hàng ${orderName} (${orderEmail} - SĐT: ${orderPhone}) vừa đặt một đơn Custom PC!\nGhi chú: ${orderNote}`,
+            // EmailJS requires images to be passed correctly, usually as HTML <img> tag if supported, 
+            // or via an attached URL. Since base64 is huge, we will pass it into an <img src="{{design_image}}"> in EmailJS template.
+            design_image: base64Image
         }
 
         try {
-            // BƯỚC 2: Gọi API EmailJS dạng REST
             const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -297,7 +320,7 @@ export default function PCCaseCustomizer() {
             })
 
             // Allow demo to succeed even if fake credentials are used locally
-            if (res.ok || serviceID === 'YOUR_SERVICE_ID') {
+            if (res.ok || serviceID === 'service_f3od69s') {
                 setOrderDone(true)
                 setTimeout(() => {
                     setShowOrder(false); setOrderDone(false);
@@ -323,12 +346,12 @@ export default function PCCaseCustomizer() {
         <div className="pcc-root">
 
             {/* ── HEADER ── */}
-            <header className="pcc-header">
+            <header className="pcc-header bg-white" style={{ background: '#fff', borderBottom: '1px solid var(--border)' }}>
                 <div className="pcc-header-inner">
-                    <img src="/Logo.png" alt="Semcomputer" className="pcc-logo" />
+                    <img src="/Logo.png" alt="Semcomputer" className="pcc-logo" style={{ filter: 'none' }} />
                     <div className="pcc-header-text">
-                        <h1 className="pcc-title">Design Your Own <span className="pcc-accent">PC Case</span></h1>
-                        <p className="pcc-subtitle">
+                        <h1 className="pcc-title" style={{ color: '#1a1a2e' }}>Design Your Own <span className="pcc-accent">PC Case</span></h1>
+                        <p className="pcc-subtitle" style={{ color: '#4a4a5a' }}>
                             Unleash your creativity! Add text, upload images, and stickers — create a PC case that's uniquely yours.
                         </p>
                     </div>
@@ -776,8 +799,8 @@ export default function PCCaseCustomizer() {
             )}
 
             {/* ── FOOTER ── */}
-            <footer className="pcc-footer">
-                <p>PC Case Customizer — Powered by <strong>Semcomputer</strong> 🖥️</p>
+            <footer className="pcc-footer" style={{ background: '#fff', color: 'var(--text2)', borderTop: '1px solid var(--border)' }}>
+                <p>PC Case Customizer — Powered by <strong style={{ color: 'var(--text)' }}>Semcomputer</strong> 🖥️</p>
             </footer>
         </div>
     )
