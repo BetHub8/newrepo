@@ -7,18 +7,6 @@ const PC_MODELS = [
     { id: 'local_png', name: 'Local View', src: '/pc-sem-intel-i5-12400f.png', label: 'Local PNG' },
 ]
 
-// const CASE_COLORS = [
-//     { id: 'original', name: 'Trắng', filter: 'none', hex: '#f5f5f5' },
-//     { id: 'black', name: 'Đen', filter: 'brightness(0.12) contrast(1.1)', hex: '#1a1a1a' },
-//     { id: 'gray', name: 'Xám', filter: 'grayscale(1) brightness(0.55)', hex: '#888' },
-//     { id: 'blue', name: 'Xanh', filter: 'sepia(1) saturate(4) hue-rotate(195deg) brightness(0.75)', hex: '#1565c0' },
-//     { id: 'red', name: 'Đỏ', filter: 'sepia(1) saturate(6) hue-rotate(330deg) brightness(0.7)', hex: '#c62828' },
-//     { id: 'green', name: 'Lá', filter: 'sepia(1) saturate(4) hue-rotate(85deg) brightness(0.65)', hex: '#2e7d32' },
-//     { id: 'purple', name: 'Tím', filter: 'sepia(1) saturate(4) hue-rotate(245deg) brightness(0.7)', hex: '#6a1b9a' },
-//     { id: 'gold', name: 'Vàng', filter: 'sepia(1) saturate(5) brightness(0.85)', hex: '#f9a825' },
-//     { id: 'pink', name: 'Hồng', filter: 'sepia(1) saturate(4) hue-rotate(300deg) brightness(0.85)', hex: '#e91e8c' },
-//     { id: 'cyan', name: 'Xanh Lam', filter: 'sepia(1) saturate(5) hue-rotate(165deg) brightness(0.8)', hex: '#00838f' },
-// ]
 
 const STICKERS = [
     { id: 's1', emoji: '⚡', label: 'Lightning' },
@@ -81,7 +69,6 @@ const uid = () => `l_${++_id}`
 export default function PCCaseCustomizer() {
     // State
     const [pcModel, setPcModel] = useState(PC_MODELS[0].id)
-    const [caseColor, setCaseColor] = useState('original')
     const [layers, setLayers] = useState([])
     const [activeId, setActiveId] = useState(null)
     const [zoom, setZoom] = useState(1)
@@ -111,7 +98,6 @@ export default function PCCaseCustomizer() {
 
     const activeLayer = layers.find(l => l.id === activeId)
     const currentModel = PC_MODELS.find(m => m.id === pcModel) || PC_MODELS[0]
-    // const currentColor = CASE_COLORS.find(c => c.id === caseColor) || CASE_COLORS[0]
 
     // ── Drag & Drop ─────────────────────────────────────────────────────────────
     const startDrag = useCallback((e, id) => {
@@ -393,9 +379,8 @@ export default function PCCaseCustomizer() {
                                 src={currentModel.src}
                                 alt="PC Case"
                                 className="pcc-case-img"
-                                style={{ filter: currentColor.filter }}
                                 draggable={false}
-                                crossOrigin="anonymous" /* Giúp tránh lỗi CORS khi tải ảnh file ra PNG */
+                                crossOrigin="anonymous"
                             />
 
                             {/* Draggable layers */}
@@ -483,21 +468,6 @@ export default function PCCaseCustomizer() {
                                 </button>
                             ))}
                         </div>
-
-                        {/* <p className="pcc-sec-label" style={{ marginTop: '1rem' }}>MÀU VỎ MÁY</p>
-                        <div className="pcc-color-swatches">
-                            {CASE_COLORS.map(c => (
-                                <button
-                                    key={c.id}
-                                    className={`pcc-swatch-btn ${caseColor === c.id ? 'active' : ''}`}
-                                    title={c.name}
-                                    onClick={() => setCaseColor(c.id)}
-                                >
-                                    <span className="pcc-swatch" style={{ background: c.hex }} />
-                                    <span className="pcc-swatch-name">{c.name}</span>
-                                </button>
-                            ))}
-                        </div> */}
                     </Accordion>
 
                     {/* ── Add Text ── */}
